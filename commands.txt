@@ -4,8 +4,11 @@ django-admin startapp
 
 gunicorn -b 127.0.0.1:8080 nibhaskids.wsgi:application
 
+python manage.py runserver 127.0.0.1:8080
+
 sudo ln -s /etc/nginx/sites-available/example.com /etc/nginx/sites-enabled/
 
 sudo nginx -t
+
 
 

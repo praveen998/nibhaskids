@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Form</title>
+    <!-- Include jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $("#submitBtn").click(function(){
+                // Get username and password values
+                var username = $("#username").val();
+                var password = $("#password").val();
+                
+                // Send data to Django API endpoint
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'admin_auth' %}",  // Change this URL to your Django API endpoint
+                    data: JSON.stringify({"username": username, "password": password}),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function(data){
+                        // Handle successful response
+                        console.log(data);
+                        alert("Login successful!");
+                    },
+                    error: function(xhr, textStatus, errorThrown){
+                        // Handle error
+                        console.log(xhr.responseText);
+                        alert("Login failed!");
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <h2>Login Form</h2>
+    <form id="loginForm">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username"><br><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password"><br><br>
+        <input type="button" id="submitBtn" value="Submit">
+    </form>
+</body>
+</html>

@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,7 +26,8 @@ SECRET_KEY = 'django-insecure-0rn@1(g*2715v4$$@cyzhe!ph3_fr&2h!v^($m*x4m9$0ch3!z
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+
+ALLOWED_HOSTS = ['127.0.0.1','075e-103-203-72-32.ngrok-free.app']
 
 
 # Application definition
@@ -37,7 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'questions_module',
+    'corsheaders',
 ]
+
+#CORS_ALLOWED_ORIGINS = ['']
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -47,7 +53,22 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
+
+#CORS_ALLOW_METHODS = ['GET', 'POST']  # Specify allowed HTTP methods
+#CORS_ALLOW_HEADERS = ['Content-Type']  # Specify allowed headers
+#CORS_ALLOW_CREDENTIALS = True  # Specify whether credentials (cookies) can be included in CORS requests
+
+# Allow requests from all origins
+#CORS_ALLOW_ALL_ORIGINS = True
+
+# Allow all headers
+CORS_ALLOW_ALL_HEADERS = True
+
+# Allow credentials
+CORS_ALLOW_CREDENTIALS = True
+
 
 ROOT_URLCONF = 'nibhaskids.urls'
 
@@ -75,8 +96,12 @@ WSGI_APPLICATION = 'nibhaskids.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'nibhaskids',
+        'USER': 'praveen',
+        'PASSWORD': 'praveen',
+        'HOST': 'localhost',   # or the MySQL server IP
+        'PORT': '3306',  
     }
 }
 
@@ -103,6 +128,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
+
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -123,4 +149,5 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 STATIC_ROOT = '/home/praveen/Desktop/nibhaskids/nibhaskids/static'
+
 
