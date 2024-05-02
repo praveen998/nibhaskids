@@ -27,8 +27,7 @@ SECRET_KEY = 'django-insecure-0rn@1(g*2715v4$$@cyzhe!ph3_fr&2h!v^($m*x4m9$0ch3!z
 DEBUG = True
 
 
-ALLOWED_HOSTS = ['127.0.0.1','075e-103-203-72-32.ngrok-free.app']
-
+ALLOWED_HOSTS = ['127.0.0.1','075e-103-203-72-32.ngrok-free.app','192.168.1.12']
 
 # Application definition
 
@@ -42,6 +41,7 @@ INSTALLED_APPS = [
     'questions_module',
     'corsheaders',
 ]
+
 
 #CORS_ALLOWED_ORIGINS = ['']
 
@@ -97,13 +97,26 @@ WSGI_APPLICATION = 'nibhaskids.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'nibhaskids',
+        'NAME': 'nibhaskidsapp',
         'USER': 'praveen',
         'PASSWORD': 'praveen',
         'HOST': 'localhost',   # or the MySQL server IP
         'PORT': '3306',  
     }
 }
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',  # Adjust host, port, and database number as needed
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
+
+# settings.py
+
 
 
 # Password validation
@@ -142,12 +155,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
-
+MEDIA_URL = 'media/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
 
 STATIC_ROOT = '/home/praveen/Desktop/nibhaskids/nibhaskids/static'
-
+MEDIA_ROOT = '/home/praveen/Desktop/nibhaskids/nibhaskids/media'
 
