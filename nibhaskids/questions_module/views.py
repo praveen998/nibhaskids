@@ -16,13 +16,17 @@ from .models import Session_table
 question_list=[100,101,102,103,104,105]
 q_index=-1
 
+
+#root page return index page ur("/")
 def home(request):
     cache.set('image_number',(cache.get('image_number'))+1,timeout=None)
     return render(request,'index.html')
 
+#
 def question(request):
     return JsonResponse({'success': 'successfully login!','data':question_list}, status=200)
 
+#checking 
 @csrf_exempt
 def checktext(request):
     if request.method == 'POST':
@@ -31,6 +35,7 @@ def checktext(request):
             return  JsonResponse({'success': 'valid name'}, status=200)
         else:
             return JsonResponse({'success': 'invalid name'}, status=200)
+
 
 @csrf_exempt
 def addenroll(request):
@@ -107,9 +112,6 @@ def admin_auth(request):
             username=data.get('username')
             password=data.get('password')
 
-           # username=request.POST.get('username')
-           # password=request.POST.get('password')
-            
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON data'}, status=400)
 
