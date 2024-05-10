@@ -4,60 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Image Form</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>   
 </head>
 
+
 <body>
-    <h1>Welcome to My Template!</h1>
+    <h1>Welcome to nibhaskids!</h1>
     <p>This is a sample index file.</p>
-    <button><a href="http://127.0.0.1:8080/admin_login/">login to admin </a></button>
+    <button id="loginid">login to admin </button>
+    <button id="question">next question</button>
+    <div id="response"></div>
 
+    <input type="text" id="textField" placeholder="Enter text here">
+    <div id="response1"></div>
 
-<h2>Upload Image</h2>
-
-<form id="uploadForm" enctype="multipart/form-data">
-    <input type="text" name="username" id ="userinput">
-    <input type="file" name="imagefile1" id ="imagefileInput1">
-    <input type="file" name="imagefile2" id ="imagefileInput2">
-    <input type="file" name="imagefile3" id ="imagefileInput3">
-    
-    <button type="submit">Upload</button>
-</form>
-
-
-
-    <script>
-        $(document).ready(function(){
-            $('#uploadForm').submit(function(event){
-                event.preventDefault(); // Prevent default form submission
-                
-                // Create FormData object to send form data including file
-                var formData = new FormData();
-                formData.append('username', $('#userinput').val());
-                formData.append('imagefile1', $('#imagefileInput1')[0].files[0]);
-                formData.append('imagefile2', $('#imagefileInput2')[0].files[0]);
-                formData.append('imagefile3', $('#imagefileInput3')[0].files[0]);
-                // Send AJAX POST request to the REST API
-                $.ajax({
-                    url: "{% url 'sendimage' %}",
-                    type: 'POST',
-                    data: formData,
-                    processData: false, // Prevent jQuery from automatically processing the data
-                    contentType: false, // Prevent jQuery from automatically setting contentType
-                    success: function(response){
-                        // Handle successful response
-                        console.log(response);
-                        alert('Image uploaded successfully!');
-                    },
-                    error: function(xhr, status, error){
-                        // Handle error
-                        console.error(xhr.responseText);
-                        alert('Error uploading image. Please try again.');
-                    }
-                });
-            });
+    <script type="text/javascript">
+           
+$(document).ready(function()
+{
+//first function------------------------------------------------------         
+    $("#textField").on("input",function(){
+        var inputvalue= $(this).val();
+        $.ajax({
+            type:"POST",
+            url:"http://127.0.0.1:8080/checktext/",
+            data:{
+                q: inputvalue    
+            },
+            success: function(response){
+                var jsonResponse = JSON.stringify(response);
+                var responseObject = JSON.parse(jsonResponse);
+                $("#response1").text("response:"+responseObject.success);
+            },
+   
         });
-        </script>
+       
+       
+    });
+//function end -------------------------------------------------------------------
+    $("#loginid").click(function(){
+        window.location.href = "{% url 'admin_login' %}";
+    });
+//second function--------------------------------------------------------------
+    $("#question").click(function(){
+        $.ajax({
+            type:"GET",
+            url:"http://127.0.0.1:8080/question",
+            success:function(response){
+                var jsonResponse = JSON.stringify(response);
+                var responseObject = JSON.parse(jsonResponse);
+                $("#response").text("question:"+responseObject.data[0]);
+            },
+
+            error:function(xhr,status,error){
+                $("#response").text("Error:");
+            }
+        });
+    });
+//function end-------------------------------------------------------------------
+});
+
+    </script>
 
 </body>
+
+
 </html>

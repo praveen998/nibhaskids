@@ -5,21 +5,44 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Popup Form Example</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
+<!-- Include jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!-- Include jQuery Modal library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+
 </head>
 <body>
+
 <button id="open-modal">add pattern Form</button>
 <button id="open-modal1">add normal Form</button>
+<button id="logout">logout</button>
 
 <!-- Hidden popup form -->
 
 <div id="popup-form1" class="modal">
     <form id="my-form1" class="modal-content">
+        <select id="n_enroll" name="n_enroll">
+            <option value="enroll1">enroll1</option>
+            <option value="enroll2">enroll2</option>
+            <option value="enroll3">enroll3</option>
+            <option value="enroll4">enroll4</option>
+        </select><br>
+        <select id="n_classes" name="n_classes">
+            <option value="classes1">classes1</option>
+            <option value="classes2">classes2</option>
+            <option value="classes3">classes3</option>
+            <option value="classes4">classes4</option>
+        </select><br>
+        <select id="n_subject" name="n_subject">
+            <option value="subject1">subject1</option>
+            <option value="subject2">subject2</option>
+            <option value="subject3">subject3</option>
+            <option value="subject4">subject4</option>
+        </select><br>
         <label for="n_question_name">question_name:</label>
         <input type="text" id="n_question_name" name="n_question_name" required><br><br>
         <label for="n_question">question:</label>
         <input type="text" id="n_question" name="n_question" required><br><br>
-        <label for="n_age">age:</label>
-        <input type="number" id="n_age" name="n_age" required><br><br>
         <label for="n_a">option A:</label>
         <input type="text" name="n_a" id ="n_a" required><br><br>
         <label for="n_b">option B:</label>
@@ -42,13 +65,29 @@
 <!-- Hidden popup form -->
 <div id="popup-form" class="modal">
     <form id="my-form" class="modal-content" enctype="multipart/form-data">
+        <select id="enroll" name="enroll">
+            <option value="enroll1">enroll1</option>
+            <option value="enroll2">enroll2</option>
+            <option value="enroll3">enroll3</option>
+            <option value="enroll4">enroll4</option>
+        </select><br>
+        <select id="classes" name="classes">
+            <option value="classes1">classes1</option>
+            <option value="classes2">classes2</option>
+            <option value="classes3">classes3</option>
+            <option value="classes4">classes4</option>
+        </select><br>
+        <select id="subject" name="subject">
+            <option value="subject1">subject1</option>
+            <option value="subject2">subject2</option>
+            <option value="subject3">subject3</option>
+            <option value="subject4">subject4</option>
+        </select><br>
         <label for="question_name">question_name:</label>
         <input type="text" id="question_name" name="question_name" required><br><br>
         <label for="question">question:</label>
         <input type="text" id="question" name="question" required><br><br>
-        <label for="age">age:</label>
-        <input type="number" id="age" name="age" required><br><br>
-        <label for="question">question_image:</label>
+        <label for="question_image">question_image:</label>
         <input type="file" name="question_image" id ="question_image" required><br><br>
         <label for="a">option A:</label>
         <input type="file" name="a" id ="a" required><br><br>
@@ -70,101 +109,112 @@
 </div>
 
 
-<!-- Include jQuery library -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<!-- Include jQuery Modal library -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+<script type="text/javascript">
 
-<script>
-
-$(document).ready(function(){
-    // Open modal when button is clicked
-    $("#open-modal").click(function(){
-        $("#popup-form").modal();
-    });
- 
-    // Handle form submission
-    $("#my-form").submit(function(e){
-        e.preventDefault(); // Prevent default form submission
-        var formData = new FormData();
-        formData.append('question_name', $('#question_name').val());
-        formData.append('question', $('#question').val());
-        formData.append('age', $('#age').val());
-        formData.append('question_image', $('#question_image')[0].files[0]);
-        formData.append('a', $('#a')[0].files[0]);
-        formData.append('b', $('#b')[0].files[0]);
-        formData.append('c', $('#c')[0].files[0]);
-        formData.append('d', $('#d')[0].files[0]);
-        formData.append('answer', $('#answer').val());
-
-        // Perform AJAX request to submit form data
-        $.ajax({
-            type: "POST",
-            url: "http://127.0.0.1:8080/add_pattern/", // Replace with the actual URL to submit form data
-            data: formData,
-            processData: false, // Prevent jQuery from automatically processing the data
-            contentType: false, 
-            success: function(response){
-                // Close the modal
-                $("#popup-form").modal('close');
-                
-                // Show success alert
-                alert("Success");
-
-                // Redirect to previous page
-                window.location.href = document.referrer;
-            },
-            error: function(xhr, status, error){
-                // Handle errors if any
-                console.error(xhr.responseText);
-            }
+    $(document).ready(function(){
+        // Open modal when button is clicked
+        $("#open-modal").click(function(){
+            $("#popup-form").modal();
+        });
+     
+        // Handle form submission
+        $("#my-form").submit(function(e){
+            e.preventDefault(); // Prevent default form submission
+            var formData = new FormData();
+            formData.append('n_e')
+            formData.append('question_name', $('#question_name').val());
+            formData.append('question', $('#question').val());
+            formData.append('question_image', $('#question_image')[0].files[0]);
+            formData.append('a', $('#a')[0].files[0]);
+            formData.append('b', $('#b')[0].files[0]);
+            formData.append('c', $('#c')[0].files[0]);
+            formData.append('d', $('#d')[0].files[0]);
+            formData.append('answer', $('#answer').val());
+    
+            // Perform AJAX request to submit form data
+            $.ajax({
+                type: "POST",
+                url: "http://127.0.0.1:8080/add_pattern/", // Replace with the actual URL to submit form data
+                data: formData,
+                processData: false, // Prevent jQuery from automatically processing the data
+                contentType: false, 
+                success: function(response){
+                    // Close the modal
+                    $("#popup-form").modal('close');
+                    
+                    // Show success alert
+                    alert("Success");
+    
+                    // Redirect to previous page
+                    window.location.href = document.referrer;
+                },
+                error: function(xhr, status, error){
+                    // Handle errors if any
+                    console.error(xhr.responseText);
+                }
+            });
         });
     });
-});
-
-    // Open modal when button is clicked
-    $("#open-modal1").click(function(){
-        $("#popup-form1").modal();
-    });
- 
-    // Handle form submission
-    $("#my-form1").submit(function(e){
-        e.preventDefault(); // Prevent default form submission
-        var formData = new FormData();
-        formData.append('n_question_name', $('#n_question_name').val());
-        formData.append('n_question', $('#n_question').val());
-        formData.append('n_age', $('#n_age').val());
-        formData.append('n_a', $('#n_a').val());
-        formData.append('n_b', $('#n_b').val());
-        formData.append('n_c', $('#n_c').val());
-        formData.append('n_d', $('#n_d').val());
-        formData.append('n_answer', $('#n_answer').val());
-
-        // Perform AJAX request to submit form data
-        $.ajax({
-            type: "POST",
-            url: "http://127.0.0.1:8080/add_normal/", // Replace with the actual URL to submit form data
-            data: formData,
-            processData: false, // Prevent jQuery from automatically processing the data
-            contentType: false, 
-            success: function(response){
-                // Close the modal
-                $("#popup-form1").modal('close');
-                
-                // Show success alert
-                alert("Success");
-
-                // Redirect to previous page
-                window.location.href = document.referrer;
-            },
-            error: function(xhr, status, error){
-                // Handle errors if any
-                console.error(xhr.responseText);
-            }
+    
+        // Open modal when button is clicked
+        $("#open-modal1").click(function(){
+            $("#popup-form1").modal();
         });
-    });
+     
+        // Handle form submission
+        $("#my-form1").submit(function(e){
+            e.preventDefault(); // Prevent default form submission
+            var formData = new FormData();
+            formData.append('n_enroll',$('#n_enroll').val());
+            formData.append('n_classes',$('#n_classes').val());
+            formData.append('n_subject',$('#n_subject').val());
+            formData.append('n_question_name', $('#n_question_name').val());
+            formData.append('n_question', $('#n_question').val());
+            formData.append('n_a', $('#n_a').val());
+            formData.append('n_b', $('#n_b').val());
+            formData.append('n_c', $('#n_c').val());
+            formData.append('n_d', $('#n_d').val());
+            formData.append('n_answer', $('#n_answer').val());
+    
+            // Perform AJAX request to submit form data
+            $.ajax({
+                type: "POST",
+                url: "http://127.0.0.1:8080/add_normal/", // Replace with the actual URL to submit form data
+                data: formData,
+                processData: false, // Prevent jQuery from automatically processing the data
+                contentType: false, 
+                success: function(response){
+                    // Close the modal
+                    $("#popup-form1").modal('close');
+                    
+                    // Show success alert
+                    alert("Success");
+    
+                    // Redirect to previous page
+                    window.location.href = document.referrer;
+                },
+                error: function(xhr, status, error){
+                    // Handle errors if any
+                    console.error(xhr.responseText);
+                }
+            });
+            $("#logout").click(function(){
 
+        $.ajax({
+            type:GET,
+            url:"https://f110-103-203-73-180.ngrok-free.app/logout/",
+            dataType: "json",
+            success: function(response) {
+            // Handle successful response
+            window.location.href="https://praveen998.github.io/nibhasweb/admin_login.html"
+        },
+        });
+
+       })
+    });
 </script>
+    
+
 
 </body>
 </html>

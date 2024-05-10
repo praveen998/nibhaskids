@@ -6,28 +6,6 @@
     <title>Login Form</title>
     <!-- Include jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function(){
-            $("#submitBtn").click(function(){
-                // Get username and password values
-                var username = $("#username").val();
-                var password = $("#password").val();   
-                // Send data to Django API endpoint
-                $.ajax({
-                    type: "POST",
-                    url: "http://127.0.0.1:8080/admin_auth/",  // Change this URL to your Django API endpoint
-                    data: JSON.stringify({"username": username, "password": password}),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    error: function(xhr, textStatus, errorThrown){
-                        // Handle error
-                        console.log(xhr.responseText);
-                        alert("Login failed!");
-                    }
-                });
-            });
-        });
-    </script>
 </head>
 <body>
     <h2>Login Form</h2>
@@ -36,7 +14,41 @@
         <input type="text" id="username" name="username"><br><br>
         <label for="password">Password:</label>
         <input type="password" id="password" name="password"><br><br>
-        <input type="button" id="submitBtn" value="Submit">
+        <input type="submit" id="submitBtn" value="Submit"> <!-- Change type to "submit" -->
     </form>
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#loginForm').submit(function(event){
+                event.preventDefault();
+                var formData = new FormData(); // Corrected initialization
+                formData.append('username', $('#username').val());
+                formData.append('password', $('#password').val());
+                $.ajax({
+                    type: "POST",
+                    url: "http://127.0.0.1:8080/admin_auth/",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) 
+                    {
+                            var jsonResponse = JSON.stringify(response);
+                            var responseObject = JSON.parse(jsonResponse);
+                        var successValue = responseObject.name;
+                        document.cookie = "name=" + encodeURIComponent(successValue);
+                        alert(successValue);
+                        window.location.href = "{% url 'adminpanel' %}";
+                    },
+
+                    error: function(xhr, status, error)
+                    {
+                        alert('failed to login')
+                        console.error(xhr.responseText);
+                    },
+                });
+            });
+        });
+    </script>
 </body>
+
 </html>

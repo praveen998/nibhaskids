@@ -1,42 +1,127 @@
 from django.shortcuts import render,redirect
 from .forms import Admin_Form,Normal_question_form,Pattern_question_form
+from .forms import Enrolls_form,Classes_form,Subjects_form
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.http import JsonResponse
 from django.core.cache import cache
 import os
-from .service import random_hash,save_file,admin_authentication
+from .service import random_hash,save_file,admin_authentication,get_client_ip
 from django.contrib.auth import authenticate,login
+from .models import Session_table
+
 
 # Create your views here.
-
+question_list=[100,101,102,103,104,105]
+q_index=-1
 
 def home(request):
-    print(random_hash()+str(cache.get('image_number')))
-    print(random_hash()+str(cache.get('image_number')))
-    print(random_hash()+str(cache.get('image_number')))
     cache.set('image_number',(cache.get('image_number'))+1,timeout=None)
     return render(request,'index.html')
+
+def question(request):
+    return JsonResponse({'success': 'successfully login!','data':question_list}, status=200)
+
+@csrf_exempt
+def checktext(request):
+    if request.method == 'POST':
+        inputs=request.POST.get('q')
+        if inputs == 'praveen':
+            return  JsonResponse({'success': 'valid name'}, status=200)
+        else:
+            return JsonResponse({'success': 'invalid name'}, status=200)
+
+@csrf_exempt
+def addenroll(request):
+    if request.method == "POST":
+        try:
+            enroll=request.POST.get('enroll')
+            enrollform=Enrolls_form(data={'enroll_types'})
+            if enrollform.is_valid():
+                enrollform.save()
+                return JsonResponse({'success':'Enroll added successfully!'},status=200)
+            else:
+                return JsonResponse({'error': 'failed to insert'}, status=400)
+
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+
+    return JsonResponse({'success': 'invalid name'}, status=200)
+
+@csrf_exempt
+def addclass(request):
+    if request.method == "POST":
+        try:
+            data=json.loads(request.body)
+            subject=data.get('class')
+            classid=data.get('enroll')
+            Classform=Classes_form(data={'class_types','enroll_id'})
+            if Classform.is_valid():
+                Classform.save()
+                return JsonResponse({'success':'class added successfully!'},status=200)
+            else:
+                return JsonResponse({'error': 'failed to insert'}, status=400)
+            
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+
+
+    return JsonResponse({'success': 'invalid name'}, status=200)
+
+@csrf_exempt
+def addsubject(request):
+    if request.method == "POST":
+        try:
+            data=json.loads(request.body)
+            subject=data.get('subject')
+            classid=data.get('class')
+            subjectform=Subjects_form(data={'subject_types','class_id'})
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+        
+    return JsonResponse({'success': 'invalid name'}, status=200)
+
+
+@csrf_exempt
+def session_auth(request):
+   # if request.method == 'POST':
+    jwt=request.headers.get('token')
+    print(jwt)
+    if  jwt:
+        token=jwt.strip()
+        print("token:",token)
+        return JsonResponse({'message':'token printed'})
+    else:
+        return JsonResponse({'error':'header is missing'},status=400)
+   # else:
+    #    return JsonResponse({'error':'method not allowed'},status=405)
 
 
 @csrf_exempt
 def admin_auth(request):
+    
     if request.method == 'POST':
         try:
             data=json.loads(request.body)
             username=data.get('username')
             password=data.get('password')
-            form=Admin_Form(data={'username':username,'password':password})
-        
+
+           # username=request.POST.get('username')
+           # password=request.POST.get('password')
+            
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON data'}, status=400)
 
-        if form.is_valid():
-            if admin_authentication(username,password):
-                print('success')
-                return render(request,'adminpanel.html')
+        if admin_authentication(username,password):
+            ip=get_client_ip(request)
+            cache.set(ip,username,timeout=None)
+            print(ip)
+            response=JsonResponse({'success': 'successfully login!','name':'praveen'}, status=200)
+            return response
 
+        else:
+            return JsonResponse({'error': 'invalid username and password'}, status=400)
     else:
         return JsonResponse({'error': 'Only POST requests are allowed'}, status=405)
 
@@ -45,24 +130,30 @@ def admin_login(request):
     return render(request,'admin_login.html')
 
 
+
 def adminpanel(request):
     return render(request,'adminpanel.html')
+
 
 
 @csrf_exempt
 def add_pattern(request):
     if request.method == 'POST':
         try:
+            enroll=request.POST.get('enroll')
+            classes=request.POST.get('classes')
+            subject=request.POST.get('subject')
+            enroll_type=enroll+'-'+classes+'-'+subject
             question_name = request.POST.get('question_name')
             question = request.POST.get('question')
-            age = request.POST.get('age')
+            answer=request.POST.get('answer')
             question_image=request.FILES['question_image']
             a=request.FILES['a']
             b=request.FILES['b']
             c=request.FILES['c']
             d=request.FILES['d']
-            answer=request.POST.get('answer')
-            if question_image and a and b and c and d and answer :
+         
+            if question_image and a and b and c and d :
                 image_tuple=(
                 (question_image,cache.get('question_path')+random_hash()+str(cache.get('image_number'))+'.jpg'),
                 (a,cache.get('option_path')+random_hash()+str(cache.get('image_number'))+'.jpg'),
@@ -76,10 +167,10 @@ def add_pattern(request):
                     save_file(j,i)
             
                 p_form=Pattern_question_form(data={
+                    'enroll_type':enroll_type,
                     'question_name':question_name,
                     'question':question,
                     'question_image':image_tuple[0][1],
-                    'age':age,
                     'a':image_tuple[1][1],
                     'b':image_tuple[2][1],
                     'c':image_tuple[3][1],
@@ -96,13 +187,18 @@ def add_pattern(request):
             return JsonResponse({'error': 'Invalid JSON data'}, status=400)
 
 
+
 @csrf_exempt
 def add_normal(request):
+    ip=get_client_ip(request)
     if request.method == 'POST':
         try:
+            enroll=request.POST.get('n_enroll')
+            classes=request.POST.get('n_classes')
+            subject=request.POST.get('n_subject')
+            enroll_type=str(enroll)+'-'+str(classes)+'-'+str(subject)
             question_name = request.POST.get('n_question_name')
             question = request.POST.get('n_question')
-            age = request.POST.get('n_age')
             a = request.POST.get('n_a')
             b = request.POST.get('n_b')
             c = request.POST.get('n_c')
@@ -110,9 +206,9 @@ def add_normal(request):
             answer = request.POST.get('n_answer')
 
             n_form=Normal_question_form(data={
+                'enroll_type':enroll_type,
                 'question_name':question_name,
                 'question':question,
-                'age':age,
                 'a':a,
                 'b':b,
                 'c':c,
@@ -129,35 +225,12 @@ def add_normal(request):
             return JsonResponse({'error': 'Invalid JSON data'}, status=400)
 
 
-@csrf_exempt
-def sendimage(request):
-    if request.method == 'POST':
-        username=request.POST.get('username')
-        image.append(request.FILES['imagefile1'])
-        image.append(request.FILES['imagefile2'])
-        image.append(request.FILES['imagefile3'])
-        question_dir = 'media/questions/question_images/'
-        options_dir = 'media/questions/options/'
-        answers_dir = 'media/questions/answers/'
-        filename = 'uploaded_image.jpg'  # You can customize the filename as needed
-        print(cache.get('question_path'))
-        print(cache.get('option_path'))
-        print(cache.get('answer_path'))
-        print(cache.get('image_number'))
-        cache.set('image_number',(cache.get('image_number'))+1,timeout=None)
-        print(cache.get('image_number'))
-
-
-        #for i in image:
-           # question_path = os.path.join('media/questions/', filename)
-        # with open(upload_path,'wb') as f:
-            #    for chunk in image.chunks():
-            #       f.write(chunk)
-
-
-        return JsonResponse({'success': 'Image uploaded successfully!'}, status=200)
+def logout(request):
+    if request.method == 'GET':
+        return JsonResponse({'success':'Log out!'},status=200)
     else:
-        # Return a JSON response indicating bad request
-        return JsonResponse({'error': 'Bad request'}, status=400)
+        return JsonResponse({'error': 'Bad request'}, status=405)
+
+
 
 
