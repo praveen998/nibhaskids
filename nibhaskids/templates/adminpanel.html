@@ -15,7 +15,7 @@
 
 <button id="open-modal">add pattern Form</button>
 <button id="open-modal1">add normal Form</button>
-<button id="logout">logout</button>
+<button><a href="http://127.0.0.1:8080/">logout</a></button>
 
 <!-- Hidden popup form -->
 
@@ -198,15 +198,16 @@
                     console.error(xhr.responseText);
                 }
             });
-            $("#logout").click(function(){
 
+        $("#logout").click(function(){
         $.ajax({
             type:GET,
-            url:"https://f110-103-203-73-180.ngrok-free.app/logout/",
-            dataType: "json",
+            url:"http://127.0.0.1:8080/logout/",
+        //  dataType: "json",
             success: function(response) {
+                alert(response);
             // Handle successful response
-            window.location.href="https://praveen998.github.io/nibhasweb/admin_login.html"
+            window.location.href="http://127.0.0.1:8080/"
         },
         });
 

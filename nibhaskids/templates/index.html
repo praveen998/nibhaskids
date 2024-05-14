@@ -7,7 +7,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>   
 </head>
 
-
 <body>
     <h1>Welcome to nibhaskids!</h1>
     <p>This is a sample index file.</p>
@@ -16,12 +15,26 @@
     <div id="response"></div>
 
     <input type="text" id="textField" placeholder="Enter text here">
-    <div id="response1"></div>
+    <div id="response1"></div><br><br>
 
-    <script type="text/javascript">
-           
+    <form id="addenroll">
+    <label for="add_enroll">enter new enroll:</label>
+    <input type="text" id="add_enroll" name="enroll" placeholder="Enter enroll here">
+
+    <label for="add_classes">enter new classes:</label>
+    <input type="text" id="add_classes" name="classes" placeholder="Enter classes here">
+
+    <label for="add_subject">enter new subject:</label>
+    <input type="text" id="add_subject" name="subject" placeholder="Enter subject here">
+    <input type="submit" value="Submit">
+
+    </form>
+
+<script type="text/javascript">
+          
 $(document).ready(function()
 {
+
 //first function------------------------------------------------------         
     $("#textField").on("input",function(){
         var inputvalue= $(this).val();
@@ -45,7 +58,7 @@ $(document).ready(function()
     $("#loginid").click(function(){
         window.location.href = "{% url 'admin_login' %}";
     });
-//second function--------------------------------------------------------------
+//second function-----------------------------------------------------------------
     $("#question").click(function(){
         $.ajax({
             type:"GET",
@@ -62,6 +75,29 @@ $(document).ready(function()
         });
     });
 //function end-------------------------------------------------------------------
+//form submission for enroll-----------------------------------------------------
+    $("#addenroll").submit(function(){
+        event.preventDefault();
+        var formData=$(this).serializeArray();
+        var jsonData={};
+        $.each(formData,function(){
+            jsonData[this.name]=this.value;
+        });
+        console.log(jsonData);
+
+        $.ajax({
+            url:"",
+            type:"POST",
+            contentType:"application/json",
+            data:JSON.stringify(jsonData),
+            success:function(){
+                alert(response);
+            }
+
+        });
+
+    });
+
 });
 
     </script>

@@ -15,4 +15,7 @@ urlpatterns = [
     path('question/',views.question,name='question'),
     path('checktext/',views.checktext,name='checktext'),
     path('session_auth/',views.session_auth,name='session_auth'),
+    path('addenroll/',views.addenroll,name='addenroll'),
+    path('addclass/',views.addclass,name='addclass'),
+    path('addsubject/',views.addsubject,name='addsubject'),
 ]

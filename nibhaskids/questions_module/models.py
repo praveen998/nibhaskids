@@ -49,24 +49,25 @@ class Session_table(models.Model):
     class meta:
         db_table='Session_table'
 
+
 class Enrolls(models.Model):
     enroll_id=models.AutoField(primary_key=True)
-    enroll_types=models.CharField(max_length=100)
+    enroll_types=models.CharField(max_length=100,unique=True)
+   
+
+
 
 class Classes(models.Model):
     class_id=models.AutoField(primary_key=True)
     class_types=models.CharField(max_length=100)
     enroll_id=models.ForeignKey(Enrolls,on_delete=models.CASCADE)
 
+
 class Subjects(models.Model):
     subject_id=models.AutoField(primary_key=True)
     subject_types=models.CharField(max_length=100)
     class_id=models.ForeignKey(Classes,on_delete=models.CASCADE)
+    enroll_id=models.ForeignKey(Enrolls,on_delete=models.CASCADE)
  
  
-
-
-
-    
-
 
