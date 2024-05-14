@@ -54,6 +54,7 @@ def addenroll(request):
     else:
         return JsonResponse({'error': 'Invalid JSON data'}, status=400) 
 
+
 #add classes table data--------------------------------------------------------------------------
 @csrf_exempt
 def addclass(request):
@@ -250,25 +251,47 @@ def logout(request):
 
 #api for sending all enroll,classes,subject----------------------------------------------
 def get_enroll_data(request):
+    row=[]
     if request.method == 'GET':
-
-        return JsonResponse({'success':'Log out!'},status=200)
+        enr=Enrolls.objects.all()
+        for i in enr:
+            print(i.enroll_types)
+            row.append(i.enroll_types)
+        return JsonResponse({'success':row},status=200)
     else:
-        return JsonResponse({'error': 'Bad request'}, status=405)
+        return JsonResponse({'error':'Bad request'}, status=405)
 
 @csrf_exempt
 def get_classes_data(request):
-    if request.method == 'GET':
-        
-        return JsonResponse({'success':'Log out!'},status=200)
+    if request.method == 'POST':
+        clslist=[]
+        data=json.loads(request.body)
+        enr=Enrolls.objects.filter(enroll_types=data.get('enroll'))
+        for i in enr:
+            c=i.enroll_id
+        cls=Classes.objects.filter(enroll_id=c)
+        for i in cls:
+            clslist.append(i.class_types)
+        return JsonResponse({'success':clslist},status=200)
     else:
         return JsonResponse({'error': 'Bad request'}, status=405)
 
 @csrf_exempt
 def get_subject_data(request):
-    if request.method == 'GET':
+    sublist=[]
+    if request.method == 'POST':
+        data=json.loads(request.body)
+        enr=Enrolls.objects.filter(enroll_types=data.get('enroll'))
+        for i in enr:
+            eid=i.enroll_id
+        cls=Classes.objects.filter(class_types=data.get('classes')).filter(enroll_id_id=eid)
+        for i in cls:
+            cid=i.class_id
+        sub=Subjects.objects.filter(class_id_id=cid).filter(enroll_id_id=eid)
+        for i in sub:
+            sublist.append(i.subject_types)
         
-        return JsonResponse({'success':'Log out!'},status=200)
+        return JsonResponse({'success':sublist},status=200)
     else:
         return JsonResponse({'error': 'Bad request'}, status=405)
 

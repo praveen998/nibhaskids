@@ -18,4 +18,7 @@ urlpatterns = [
     path('addenroll/',views.addenroll,name='addenroll'),
     path('addclass/',views.addclass,name='addclass'),
     path('addsubject/',views.addsubject,name='addsubject'),
+    path('get_enroll_data/',views.get_enroll_data,name='get_enroll_data'),
+    path('get_classes_data/',views.get_classes_data,name='get_classes_data'),
+    path('get_subject_data/',views.get_subject_data,name='get_subject_data'),
 ]
