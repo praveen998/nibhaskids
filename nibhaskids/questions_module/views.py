@@ -29,6 +29,8 @@ def home(request):
 def question(request):
     return JsonResponse({'success': 'successfully login!','data':question_list}, status=200)
 
+
+
 #checking async api connection with front end--------------------------------------------------------
 @csrf_exempt
 def checktext(request):
@@ -61,6 +63,8 @@ def addclass(request):
     if request.method == "POST":
         try:
             data=json.loads(request.body)
+            print(data.get('enroll'))
+            print(data.get('classes'))
             enroll=Enrolls.objects.filter(enroll_types=data.get('enroll'))
             if enroll.count()==1:
                for obj in enroll:
@@ -69,10 +73,11 @@ def addclass(request):
                         enroll_id=obj)
                     return JsonResponse({'success':"class added"},status=200)
         except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON data'}, status=400)
-        
+                return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+    return JsonResponse({'error': 'Invalid JSON data'}, status=400)
 
 #add subject table data---------------------------------------------------------------------------
+
 @csrf_exempt
 def addsubject(request):
     eid=None
@@ -89,7 +94,7 @@ def addsubject(request):
             print(f"subject:{data.get('subject')}")
             print(f"enroll_id:{eid.enroll_id}")
             print(f"class_id:{cid.class_id}")
-            Subjects.objects.create(subject_types=data.get('subject'),enroll_id=eid,class_id=cid)
+            Subjects.objects.create(subject_types=data.get('subject'),enroll_id_id=eid.enroll_id,class_id_id=cid.class_id)
             return JsonResponse({'success': 'subject added'}, status=200)
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON data'}, status=400)
@@ -106,7 +111,7 @@ def session_auth(request):
         if  jwt:
             token=jwt.strip()
             print("token:",token)
-            return JsonResponse({'message':'token printed'})
+            return JsonResponse({'message':'token xprinted'})
         else:
             return JsonResponse({'error':'header is missing'},status=400)
     else:
@@ -209,17 +214,18 @@ def add_normal(request):
     ip=get_client_ip(request)
     if request.method == 'POST':
         try:
-            enroll=request.POST.get('n_enroll')
-            classes=request.POST.get('n_classes')
-            subject=request.POST.get('n_subject')
+            data=json.loads(request.body)
+            enroll=data.get('n_enroll')
+            classes=data.get('n_classes')
+            subject=data.get('n_subject')
             enroll_type=str(enroll)+'-'+str(classes)+'-'+str(subject)
-            question_name = request.POST.get('n_question_name')
-            question = request.POST.get('n_question')
-            a = request.POST.get('n_a')
-            b = request.POST.get('n_b')
-            c = request.POST.get('n_c')
-            d = request.POST.get('n_d')
-            answer = request.POST.get('n_answer')
+            question_name = data.get('n_question_name')
+            question = data.get('n_question')
+            a = data.get('n_a')
+            b = data.get('n_b')
+            c = data.get('n_c')
+            d = data.get('n_d')
+            answer = data.get('n_answer')
 
             n_form=Normal_question_form(data={
                 'enroll_type':enroll_type,
@@ -261,10 +267,12 @@ def get_enroll_data(request):
     else:
         return JsonResponse({'error':'Bad request'}, status=405)
 
+
 @csrf_exempt
 def get_classes_data(request):
     if request.method == 'POST':
         clslist=[]
+        c=None
         data=json.loads(request.body)
         enr=Enrolls.objects.filter(enroll_types=data.get('enroll'))
         for i in enr:
@@ -275,6 +283,7 @@ def get_classes_data(request):
         return JsonResponse({'success':clslist},status=200)
     else:
         return JsonResponse({'error': 'Bad request'}, status=405)
+
 
 @csrf_exempt
 def get_subject_data(request):
@@ -296,5 +305,54 @@ def get_subject_data(request):
         return JsonResponse({'error': 'Bad request'}, status=405)
 
 
+@csrf_exempt
+def delete_enroll(request):
+    if request.method == "POST":
+        data=json.loads(request.body)
+        print(data.get('enroll'))
+    
+        try:
+            enr=Enrolls.objects.get(enroll_types=data.get('enroll'))
+            enr.delete()
+            return JsonResponse({'success':f'{data.get("enroll")} deleted successfully!'},status=200)   
+        except Exception as e:
+            return JsonResponse({'success':str(e)},status=200)
+    else:
+        return JsonResponse({'error': 'Invalid JSON data'}, status=400) 
 
+@csrf_exempt
+def delete_classes(request):
+    e_id=None
+    if request.method == "POST":
+        try:
+            data=json.loads(request.body)
+            enroll=Enrolls.objects.filter(enroll_types=data.get('enroll'))
+            for obj in enroll:
+                e_id=obj.enroll_id
+            Classes.objects.filter(enroll_id_id=e_id).filter(class_types=data.get('classes')).delete()
+            return JsonResponse({'success':f"{data.get('classes')}"},status=200)
+        except json.JSONDecodeError:
+                return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+    return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+
+
+@csrf_exempt
+def delete_subject(request):
+    eid=None
+    cid=None
+    if request.method == "POST":
+        try:
+            data=json.loads(request.body)
+            enroll=Enrolls.objects.filter(enroll_types=data.get('enroll'))
+            for obj1 in enroll:
+                eid=obj1.enroll_id
+            classes=Classes.objects.filter(class_types=data.get('classes')).filter(enroll_id_id=eid)
+            for obj2 in classes:
+                cid=obj2.class_id
+            Subjects.objects.filter(subject_types=data.get('subject'),enroll_id_id=eid,class_id_id=cid).delete()
+            return JsonResponse({'success': f"{data.get('subject')}deleted successfully"}, status=200)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+    else:
+        return JsonResponse({'error': 'Invalid JSON data'}, status=400)
 

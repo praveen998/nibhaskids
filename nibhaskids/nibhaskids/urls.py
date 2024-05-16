@@ -21,4 +21,7 @@ urlpatterns = [
     path('get_enroll_data/',views.get_enroll_data,name='get_enroll_data'),
     path('get_classes_data/',views.get_classes_data,name='get_classes_data'),
     path('get_subject_data/',views.get_subject_data,name='get_subject_data'),
+    path('delete_enroll/',views.delete_enroll,name='delete_enroll'),
+    path('delete_classes/',views.delete_classes,name='delete_classes'),
+    path('delete_subject/',views.delete_subject,name='delete_subject'),
 ]
